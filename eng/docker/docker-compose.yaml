@@ -1,0 +1,62 @@
+version: '3.8'
+services:
+  dbsqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest    
+    container_name: dbsqlserver            
+    restart: always      
+    environment:
+        - SA_PASSWORD=Dev@local123456
+        - ACCEPT_EULA=Y        
+        - TZ=America/Fortaleza
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-U", "sa", "-P", "Dev@local123456", "-Q", "select 1"]
+      interval: 1s
+      retries: 20
+    ports:
+      - 1433:1433
+    networks:
+      - template
+  sonarqube.postgresql:    
+    image: postgres
+    container_name: sonarqube.postgresql
+    networks:
+      - template
+    environment:
+      - POSTGRES_USER=sonar
+      - POSTGRES_PASSWORD=sonar
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+  sonarqube.portal:
+    image: sonarqube
+    container_name: sonarqube.portal
+    ports:
+      - '9000:9000'
+    networks:
+      - template
+    environment:
+      - sonar.jdbc.url=jdbc:postgresql://sonarqube.postgresql:5432/sonar
+      - sonar.jdbc.username=sonar
+      - sonar.jdbc.password=sonar
+      - sonar.search.javaAdditionalOpts=-Dbootstrap.system_call_filter=false
+    volumes:
+      - sonarqube_conf:/opt/sonarqube/conf
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
+    depends_on: 
+      - sonarqube.postgresql
+
+networks:
+  template:
+volumes:
+  sonarqube_conf:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_bundled-plugins:
+  postgresql:
+  postgresql_data:

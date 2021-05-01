@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>$(NetTargetVersion)</TargetFramework>
+    <UserSecretsId>acb1eddf-5669-4cdb-9974-cc6c6107df16</UserSecretsId>    
+    <Authors>myBestName</Authors>
+    <!-- Maps to author parameter -->
+    <Description>Project description</Description>
+    <!-- Maps to description parameter -->
+    <Copyright>Copyright © myBestName, Year</Copyright>
+    <!-- Maps to author and year parameter -->
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>OfficesLegal.Api.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.UI" Version="5.0.1" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="5.0.1" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.InMemory.Storage" Version="5.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="$(EntityFrameworkCoreVersion)" />    
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OfficesLegal.Application\OfficesLegal.Application.csproj" />
+    <ProjectReference Include="..\OfficesLegal.Infra.Data\OfficesLegal.Infra.Data.csproj" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="powershell  -NoProfile -ExecutionPolicy unrestricted -file $(SolutionDir)eng\start-infra.ps1" />
+  </Target>
+
+</Project>

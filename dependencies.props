@@ -1,0 +1,8 @@
+<Project>
+	<PropertyGroup Label="TargetVersion">
+		<NetTargetVersion>net5.0</NetTargetVersion>
+	</PropertyGroup>
+	<PropertyGroup Label="Extras">
+		<EntityFrameworkCoreVersion>5.0.5</EntityFrameworkCoreVersion>
+	</PropertyGroup>
+</Project>
